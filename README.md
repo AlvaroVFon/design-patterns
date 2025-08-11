@@ -17,130 +17,119 @@ El patrón **Factory Method** es un patrón creacional que proporciona una inter
 
 ### 🤔 Problema que Resuelve
 
-Imagina que tienes una aplicación de notificaciones que inicialmente solo enviaba emails. Con el tiempo, necesitas agregar SMS y notificaciones push. El patrón Factory Method te permite crear diferentes tipos de notificaciones sin modificar el código existente.
+Imagina que tienes un juego RPG donde necesitas crear diferentes tipos de personajes (Guerrero, Mago, Pícaro, Sanador). El patrón Factory Method te permite crear diferentes tipos de personajes sin modificar el código existente, delegando la creación específica a las subclases.
 
 ### 🏗️ Estructura
 
 ```
-Creator (Notifications)
-├── factoryMethod(): Product
-└── send(): void
+Creator (CharacterCreator)
+├── character: Character (protected)
+├── factoryMethod(): Character
+├── attack(): void
+└── greet(): void
 
-ConcreteCreator (EmailNotification, SMSNotification, PushNotification)
-└── factoryMethod(): ConcreteProduct
+ConcreteCreator (WarriorCreator, MageCreator, RogueCreator, HealerCreator)
+└── factoryMethod(): ConcreteCharacter
 
-Product (Notificator)
-└── send(message: string): void
+Product (Character)
+├── class: string
+├── attack(): void
+└── greet(): void
 
-ConcreteProduct (Email, SMS, Push)
-└── send(message: string): void
+ConcreteProduct (Warrior, Mage, Rogue, Healer)
+├── class: string
+├── attack(): void
+└── greet(): void
 ```
 
 ### 💡 Implementación
 
-#### 1. Interfaz del Producto (Notificator)
+#### 1. Interfaz del Producto (Character)
 
 ```typescript
-export interface Notificator<T> {
-  send: (message: string) => void;
+export interface Character {
+  class: string;
+  attack: () => void;
+  greet: () => void;
 }
 ```
 
-#### 2. Clase Creadora Abstracta (Notifications)
+#### 2. Clase Creadora Abstracta (CharacterCreator)
 
 ```typescript
-import { Notificator } from "../interfaces/Notificator";
+import { Character } from "../product/Character";
 
-abstract class Notifications<T> {
-  protected destinatario: T;
+abstract class CharacterCreator {
+  protected character: Character;
 
-  constructor(destinatario: T) {
-    this.destinatario = destinatario;
+  constructor() {
+    // 🏭 Crea el personaje al instanciar el creator
+    this.character = this.factoryMethod();
   }
 
   // 🏭 Factory Method - delega la creación a las subclases
-  abstract factoryMethod(): Notificator<T>;
+  abstract factoryMethod(): Character;
 
-  // 📤 Método que usa el factory method
-  send(message: string) {
-    const notificator = this.factoryMethod();
-    notificator.send(message);
+  // ⚔️ Método que usa el personaje creado para atacar
+  attack(): void {
+    this.character.attack();
+  }
+
+  // 👋 Método que usa el personaje creado para saludar
+  greet(): void {
+    this.character.greet();
   }
 }
 ```
 
 #### 3. Creadores Concretos
 
-**EmailNotification:**
+**WarriorCreator:**
 ```typescript
-class EmailNotification extends Notifications<string> {
-  factoryMethod(): Notificator<string> {
-    return new EmailNotificator(this.destinatario);
+class WarriorCreator extends CharacterCreator {
+  factoryMethod(): Character {
+    return new Warrior();
   }
 }
 ```
 
-**SMSNotification:**
+**MageCreator:**
 ```typescript
-class SMSNotification extends Notifications<string> {
-  factoryMethod() {
-    return new SMSNotificator(this.destinatario);
-  }
-}
-```
-
-**PushNotification:**
-```typescript
-class PushNotification extends Notifications<string> {
-  factoryMethod() {
-    return new PushNotificator(this.destinatario);
+class MageCreator extends CharacterCreator {
+  factoryMethod(): Character {
+    return new Mage();
   }
 }
 ```
 
 #### 4. Productos Concretos
 
-**EmailNotificator:**
+**Warrior:**
 ```typescript
-class Email implements Notificator<string> {
-  private email: string;
+class Warrior implements Character {
+  class = "Warrior";
 
-  constructor(email: string) {
-    this.email = email;
+  attack(): void {
+    console.log(`Warrior attacks with a sword!`);
   }
 
-  send(message: string): void {
-    console.log(`Sending email to ${this.email}: ${message}`);
+  greet(): void {
+    console.log(`Warrior says: For honor!`);
   }
 }
 ```
 
-**SMSNotificator:**
+**Mage:**
 ```typescript
-class SMS implements Notificator<string> {
-  private phoneNumber: string;
+class Mage implements Character {
+  class = "Mage";
 
-  constructor(phoneNumber: string) {
-    this.phoneNumber = phoneNumber;
+  attack(): void {
+    console.log(`Mage casts a fireball!`);
   }
 
-  send(message: string): void {
-    console.log(`Sending SMS to ${this.phoneNumber}: ${message}`);
-  }
-}
-```
-
-**PushNotificator:**
-```typescript
-class Push implements Notificator<string> {
-  constructor(private deviceToken: string) {
-    this.deviceToken = deviceToken;
-  }
-
-  send(message: string): void {
-    console.log(
-      `Sending push notification to device ${this.deviceToken}: ${message}`,
-    );
+  greet(): void {
+    console.log(`Mage says: Knowledge is power!`);
   }
 }
 ```
@@ -149,21 +138,28 @@ class Push implements Notificator<string> {
 
 ```typescript
 function main() {
-  const email = new EmailNotification("alvaro@email.com");
-  const push = new PushNotification("12312312321");
-  const sms = new SMSNotification("888333999");
+  const warrior = new WarriorCreator();
+  const healer = new HealerCreator();
+  const rogue = new RogueCreator();
+  const mage = new MageCreator();
 
-  email.send("Hello, this is an email notification!");
-  push.send("Hello, this is a push notification!");
-  sms.send("Hello, this is an SMS notification!");
+  warrior.attack();
+  healer.attack();
+  rogue.attack();
+  mage.attack();
+
+  warrior.greet();
+  healer.greet();
+  rogue.greet();
+  mage.greet();
 }
 ```
 
 ### ✅ Ventajas
 
-1. **Principio Abierto/Cerrado**: Puedes agregar nuevos tipos de notificaciones sin modificar código existente
+1. **Principio Abierto/Cerrado**: Puedes agregar nuevos tipos de personajes sin modificar código existente
 2. **Separación de responsabilidades**: La lógica de creación está separada del uso
-3. **Flexibilidad**: Fácil intercambio de productos
+3. **Flexibilidad**: Fácil intercambio de personajes
 4. **Mantenibilidad**: Código más organizado y fácil de mantener
 
 ### ❌ Desventajas
@@ -173,9 +169,9 @@ function main() {
 
 ### 🎯 Cuándo Usar
 
-- Cuando no sabes de antemano los tipos exactos de objetos que necesitarás
-- Cuando quieres proporcionar a los usuarios una forma de extender componentes internos
-- Cuando quieres reutilizar objetos existentes en lugar de reconstruirlos
+- Cuando no sabes de antemano los tipos exactos de personajes que necesitarás
+- Cuando quieres proporcionar a los usuarios una forma de extender el sistema de personajes
+- Cuando quieres reutilizar personajes existentes en lugar de reconstruirlos
 
 ### 🔧 Ejecutar el Ejemplo
 
@@ -186,9 +182,14 @@ npx ts-node index.ts
 
 **Salida esperada:**
 ```
-Sending email to alvaro@email.com: Hello, this is an email notification!
-Sending push notification to device 12312312321: Hello, this is a push notification!
-Sending SMS to 888333999: Hello, this is an SMS notification!
+Warrior attacks with a sword!
+Warrior says: For honor!
+Mage casts a fireball!
+Mage says: Knowledge is power!
+Rogue strikes from the shadows!
+Rogue says: Silence is golden!
+Healer casts a healing spell!
+Healer says: Healing is my duty!
 ```
 
 ---

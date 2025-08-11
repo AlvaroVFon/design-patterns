@@ -1,15 +1,23 @@
-import EmailNotification from './concreteCreators/Email'
-import SMSNotification from './concreteCreators/SMS'
-import PushNotification from './concreteCreators/Push'
+import WarriorCreator from "./concreteCreators/Warrior";
+import HealerCreator from "./concreteCreators/Healer";
+import RogueCreator from "./concreteCreators/Rogue";
+import MageCreator from "./concreteCreators/Mage";
 
 function main() {
-  const email = new EmailNotification('alvaro@email.com')
-  const push = new PushNotification('12312312321')
-  const sms = new SMSNotification('888333999')
+  const warrior = new WarriorCreator();
+  const healer = new HealerCreator();
+  const rogue = new RogueCreator();
+  const mage = new MageCreator();
 
-  email.send('Hello, this is an email notification!')
-  push.send('Hello, this is a push notification!')
-  sms.send('Hello, this is an SMS notification!')
+  warrior.attack();
+  healer.attack();
+  rogue.attack();
+  mage.attack();
+
+  warrior.greet();
+  healer.greet();
+  rogue.greet();
+  mage.greet();
 }
 
-main()
+main();
