@@ -6,8 +6,9 @@ Este repositorio contiene implementaciones de diferentes patrones de diseño en 
 
 - [Factory Method (POO)](#factory-method-poo)
 - [Factory Method (Funcional)](#factory-method-funcional)
+- [Strategy (POO)](#strategy-poo)
+- [Strategy (Funcional)](#strategy-funcional)
 
----
 
 ## Factory Method (POO)
 
@@ -330,3 +331,149 @@ Warrior says: For honor!
 Mage says: Knowledge is power!
 Healer says: Healing is my duty!
 ```
+---
+
+# Strategy (POO)
+
+El patrón Strategy permite definir una familia de algoritmos, encapsular cada uno y hacerlos intercambiables. Permite que el algoritmo varíe independientemente de los clientes que lo utilizan.
+
+**Estructura:**
+
+- `Strategy`: Interfaz que define el método `attack()`
+- Estrategias concretas: `SwordStrategy`, `SpellStrategy`, `BowStrategy`
+- Contexto: `CharacterAttack` que usa una estrategia y permite cambiarla
+
+**Ejemplo real:**
+
+`02-strategy/POO/strategy.ts`
+```typescript
+export interface Strategy {
+  attack(): void;
+}
+```
+
+`02-strategy/POO/strategies/SwordStrategy.ts`
+```typescript
+import { Strategy } from "../strategy";
+
+class SwordStrategy implements Strategy {
+  attack(): string {
+    return "This is a sword attack";
+  }
+}
+
+export default SwordStrategy;
+```
+
+`02-strategy/POO/strategies/SpellStrategy.ts`
+```typescript
+import { Strategy } from "../strategy";
+
+class SpellStrategy implements Strategy {
+  attack(): string {
+    return "This is a spell attack";
+  }
+}
+
+export default SpellStrategy;
+```
+
+`02-strategy/POO/context.ts`
+```typescript
+import { Strategy } from "./strategy";
+
+class CharacterAttack {
+  constructor(private strategy: Strategy) {
+    this.strategy = strategy;
+  }
+
+  setStrategy(strategy: Strategy) {
+    this.strategy = strategy;
+  }
+
+  attack(): void {
+    console.log(this.strategy.attack());
+  }
+}
+
+export default CharacterAttack;
+```
+
+`02-strategy/POO/index.ts`
+```typescript
+import CharacterAttack from "../POO/context";
+import SwordStrategy from "../POO/strategies/SwordStrategy";
+import SpellStrategy from "../POO/strategies/SpellStrategy";
+
+const characterAttack = new CharacterAttack(new SwordStrategy());
+characterAttack.attack();
+
+characterAttack.setStrategy(new SpellStrategy());
+characterAttack.attack();
+```
+
+**Salida esperada:**
+```
+This is a sword attack
+This is a spell attack
+```
+
+---
+
+# Strategy (Funcional)
+
+Implementación funcional del patrón Strategy usando funciones en vez de clases.
+
+**Estructura:**
+
+- `Strategy`: Tipo función que representa una estrategia de ataque
+- Estrategias concretas: `swordStrategy`, `spellStrategy`, `bowStrategy`
+- Contexto: función `characterAttack` que recibe una estrategia y la ejecuta
+
+**Ejemplo real:**
+
+`02-strategy/functional/strategy.ts`
+```typescript
+export type Strategy = () => void;
+```
+
+`02-strategy/functional/strategies.ts`
+```typescript
+export function swordStrategy() {
+  return "This is a sword attack";
+}
+
+export function bowStrategy() {
+  return "This is a bow attack";
+}
+
+export function spellStrategy() {
+  return "This is a spell attack";
+}
+```
+
+`02-strategy/functional/context.ts`
+```typescript
+import { Strategy } from "./strategy";
+
+export function characterAttack(strategy: Strategy) {
+  return console.log(strategy());
+}
+```
+
+`02-strategy/functional/index.ts`
+```typescript
+import { characterAttack } from "./context";
+import { swordStrategy, spellStrategy } from "./strategies";
+
+characterAttack(swordStrategy);
+characterAttack(spellStrategy);
+```
+
+**Salida esperada:**
+```
+This is a sword attack
+This is a spell attack
+```
+
+---
