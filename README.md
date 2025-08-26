@@ -8,6 +8,8 @@ Este repositorio contiene implementaciones de diferentes patrones de diseño en 
 - [Factory Method (Funcional)](#factory-method-funcional)
 - [Strategy (POO)](#strategy-poo)
 - [Strategy (Funcional)](#strategy-funcional)
+- [Observer (POO)](#observer-poo)
+- [Observer (Funcional)](#observer-funcional)
 
 
 ## Factory Method (POO)
@@ -477,3 +479,275 @@ This is a spell attack
 ```
 
 ---
+
+# Observer (POO)
+
+El patrón **Observer** permite definir una dependencia uno-a-muchos entre objetos, de modo que cuando uno cambie su estado, todos sus dependientes sean notificados automáticamente. Es ideal para sistemas de eventos y notificaciones.
+
+### 🎯 Propósito
+
+Desacoplar el emisor de eventos (Subject) de los receptores (Observers), permitiendo que los observadores reaccionen a cambios o eventos sin que el sujeto conozca sus detalles.
+
+### 🏗️ Estructura
+
+```
+Subject (Dragon)
+├── observers: Observer[]
+├── attach(observer: Observer): void
+├── detach(observer: Observer): void
+└── notify(event: string): void
+
+Observer (Mage, Warrior, Archer, Priest)
+└── update(event: string): void
+```
+
+### 💡 Implementación
+
+#### 1. Interfaz Observer
+
+```typescript
+interface Observer {
+  update(event: string): void;
+}
+```
+
+#### 2. Interfaz Subject
+
+```typescript
+interface Subject {
+  attach(observer: Observer): void;
+  detach(observer: Observer): void;
+  notify(event: string): void;
+}
+```
+
+#### 3. Subject Concreto (Dragon)
+
+```typescript
+class Dragon implements Subject {
+  private observers: Observer[] = [];
+
+  attach(observer: Observer): void {
+    this.observers.push(observer);
+  }
+
+  detach(observer: Observer): void {
+    this.observers = this.observers.filter((obs) => obs !== observer);
+  }
+
+  notify(event: string): void {
+    console.log(`Dragon: Notifying observers about event: ${event}`);
+    for (const observer of this.observers) {
+      observer.update(event);
+    }
+  }
+}
+```
+
+#### 4. Observers Concretos
+
+```typescript
+class Mage implements Observer {
+  update(event: string): void {
+    console.log(`Mage: Received event - ${event}. Preparing spells!`);
+  }
+}
+
+class Warrior implements Observer {
+  update(event: string): void {
+    console.log(`Warrior: Received event - ${event}. Ready for battle!`);
+  }
+}
+
+class Archer implements Observer {
+  update(event: string): void {
+    console.log(`Archer: Received event - ${event}. Ready to shoot arrows!`);
+  }
+}
+
+class Priest implements Observer {
+  update(event: string): void {
+    console.log(`Priest: Received event - ${event}. Ready to heal!`);
+  }
+}
+```
+
+### 🚀 Uso del Patrón
+
+```typescript
+const dragon = new Dragon();
+const mage = new Mage();
+const warrior = new Warrior();
+const archer = new Archer();
+const priest = new Priest();
+
+dragon.attach(mage);
+dragon.attach(warrior);
+dragon.attach(archer);
+dragon.attach(priest);
+
+dragon.notify("The dragon has appeared!");
+
+dragon.detach(archer);
+dragon.notify("The dragon is attacking!");
+```
+
+**Salida esperada:**
+```
+Dragon: Notifying observers about event: The dragon has appeared!
+Mage: Received event - The dragon has appeared!. Preparing spells!
+Warrior: Received event - The dragon has appeared!. Ready for battle!
+Archer: Received event - The dragon has appeared!. Ready to shoot arrows!
+Priest: Received event - The dragon has appeared!. Ready to heal!
+Dragon: Notifying observers about event: The dragon is attacking!
+Mage: Received event - The dragon is attacking!. Preparing spells!
+Warrior: Received event - The dragon is attacking!. Ready for battle!
+Priest: Received event - The dragon is attacking!. Ready to heal!
+```
+
+### ✅ Ventajas
+
+1. Desacopla el emisor de los receptores
+2. Permite agregar/quitar observadores dinámicamente
+3. Facilita la extensión y reutilización
+
+### ❌ Desventajas
+
+1. Puede generar dependencias circulares
+2. Difícil de depurar en sistemas grandes
+
+### 🔧 Ejecutar el Ejemplo
+
+```bash
+cd 03-observer/POO
+npx ts-node index.ts
+```
+
+---
+
+# Observer (Funcional)
+
+Implementación funcional del patrón **Observer** usando funciones y composición, ideal para sistemas reactivos y de eventos en JavaScript/TypeScript.
+
+### 🎯 Propósito
+
+Permitir que múltiples funciones (observadores) reaccionen a eventos emitidos por un sujeto, sin acoplamiento entre ellos.
+
+### 🏗️ Estructura Funcional
+
+```
+Subject (createSubject)
+├── observers: Observer[]
+├── attach(observer: Observer): void
+├── detach(observer: Observer): void
+└── notify(event: string): void
+
+Observer (mage, warrior, archer, priest)
+└── (event: string) => void
+```
+
+### 💡 Implementación
+
+#### 1. Tipo Observer
+
+```typescript
+export type Observer = (event: string) => void;
+```
+
+#### 2. Interfaz Subject
+
+```typescript
+export interface Subject {
+  attach(observer: (event: string) => void): void;
+  detach(observer: (event: string) => void): void;
+  notify(event: string): void;
+}
+```
+
+#### 3. Subject Concreto
+
+```typescript
+export const createSubject = (): Subject => {
+  let observers: Observer[] = [];
+
+  function attach(observer: Observer): void {
+    observers.push(observer);
+  }
+
+  function detach(observer: Observer): void {
+    observers = observers.filter((obs) => obs !== observer);
+  }
+
+  function notify(event: string): void {
+    for (const observer of observers) {
+      observer(event);
+    }
+  }
+
+  return { attach, detach, notify };
+};
+```
+
+#### 4. Observers Concretos
+
+```typescript
+export const mage: Observer = (event: string) => {
+  console.log(`Mage: Received event - ${event}. Preparing spells!`);
+};
+
+export const warrior: Observer = (event: string) => {
+  console.log(`Warrior: Received event - ${event}. Ready for battle!`);
+};
+
+export const archer: Observer = (event: string) => {
+  console.log(`Archer: Received event - ${event}. Ready to shoot arrows!`);
+};
+
+export const priest: Observer = (event: string) => {
+  console.log(`Priest: Received event - ${event}. Healing allies!`);
+};
+```
+
+### 🚀 Uso del Patrón
+
+```typescript
+const dragon = createSubject();
+dragon.attach(mage);
+dragon.attach(warrior);
+dragon.attach(archer);
+dragon.attach(priest);
+
+dragon.notify("The dragon has appeared!");
+
+dragon.detach(archer);
+dragon.notify("The dragon is attacking!");
+```
+
+**Salida esperada:**
+```
+Mage: Received event - The dragon has appeared!. Preparing spells!
+Warrior: Received event - The dragon has appeared!. Ready for battle!
+Archer: Received event - The dragon has appeared!. Ready to shoot arrows!
+Priest: Received event - The dragon has appeared!. Healing allies!
+Mage: Received event - The dragon is attacking!. Preparing spells!
+Warrior: Received event - The dragon is attacking!. Ready for battle!
+Priest: Received event - The dragon is attacking!. Healing allies!
+```
+
+### ✅ Ventajas
+
+1. Sencillez y bajo acoplamiento
+2. Fácil de testear y extender
+3. Composición funcional
+
+### ❌ Desventajas
+
+1. Menos expresivo para sistemas complejos
+2. No hay polimorfismo clásico
+
+### 🔧 Ejecutar el Ejemplo
+
+```bash
+cd 03-observer/functional
+npx ts-node index.ts
+```
