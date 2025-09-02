@@ -10,7 +10,7 @@ Este repositorio contiene implementaciones de diferentes patrones de diseño en 
 - [Strategy (Funcional)](#strategy-funcional)
 - [Observer (POO)](#observer-poo)
 - [Observer (Funcional)](#observer-funcional)
-
+- [Adapter (POO)](#adapter-poo)
 
 ## Factory Method (POO)
 
@@ -88,6 +88,7 @@ abstract class CharacterCreator {
 #### 3. Creadores Concretos
 
 **WarriorCreator:**
+
 ```typescript
 class WarriorCreator extends CharacterCreator {
   factoryMethod(): Character {
@@ -97,6 +98,7 @@ class WarriorCreator extends CharacterCreator {
 ```
 
 **MageCreator:**
+
 ```typescript
 class MageCreator extends CharacterCreator {
   factoryMethod(): Character {
@@ -108,6 +110,7 @@ class MageCreator extends CharacterCreator {
 #### 4. Productos Concretos
 
 **Warrior:**
+
 ```typescript
 class Warrior implements Character {
   class = "Warrior";
@@ -123,6 +126,7 @@ class Warrior implements Character {
 ```
 
 **Mage:**
+
 ```typescript
 class Mage implements Character {
   class = "Mage";
@@ -184,6 +188,7 @@ npx ts-node index.ts
 ```
 
 **Salida esperada:**
+
 ```
 Warrior attacks with a sword!
 Warrior says: For honor!
@@ -250,7 +255,7 @@ function createWarrior(): Character {
 
 function createMage(): Character {
   return {
-    class: "Mage", 
+    class: "Mage",
     attack: () => console.log("Mage casts a fireball!"),
     greet: () => console.log("Mage says: Knowledge is power!"),
   };
@@ -277,31 +282,31 @@ function createCharacter(type: string): Character {
 
 ```typescript
 function main() {
-  const warrior = createCharacter('warrior')
-  const mage = createCharacter('mage')
-  const healer = createCharacter('healer')
+  const warrior = createCharacter("warrior");
+  const mage = createCharacter("mage");
+  const healer = createCharacter("healer");
 
-  warrior.attack()  // Warrior attacks with a sword!
-  mage.attack()     // Mage casts a fireball!
-  healer.attack()   // Healer casts a healing spell!
-  
-  warrior.greet()   // Warrior says: For honor!
-  mage.greet()      // Mage says: Knowledge is power!
-  healer.greet()    // Healer says: Healing is my duty!
+  warrior.attack(); // Warrior attacks with a sword!
+  mage.attack(); // Mage casts a fireball!
+  healer.attack(); // Healer casts a healing spell!
+
+  warrior.greet(); // Warrior says: For honor!
+  mage.greet(); // Mage says: Knowledge is power!
+  healer.greet(); // Healer says: Healing is my duty!
 }
 ```
 
 ### 🔄 Comparación: POO vs Funcional
 
-| Aspecto | POO | Funcional |
-|---------|-----|-----------|
-| **Abstracción** | Clases abstractas e interfaces | Types e interfaces |
-| **Creación** | Métodos en clases heredadas | Funciones puras |
-| **Estado** | Propiedades de instancia | Closures o parámetros |
-| **Extensibilidad** | Herencia de clases | Composición de funciones |
-| **Complejidad** | Mayor jerarquía de clases | Menos boilerplate |
-| **Testeo** | Mocks y stubs de clases | Funciones más fáciles de testear |
-| **Memoria** | Instancias de objetos | Funciones y closures |
+| Aspecto            | POO                            | Funcional                        |
+| ------------------ | ------------------------------ | -------------------------------- |
+| **Abstracción**    | Clases abstractas e interfaces | Types e interfaces               |
+| **Creación**       | Métodos en clases heredadas    | Funciones puras                  |
+| **Estado**         | Propiedades de instancia       | Closures o parámetros            |
+| **Extensibilidad** | Herencia de clases             | Composición de funciones         |
+| **Complejidad**    | Mayor jerarquía de clases      | Menos boilerplate                |
+| **Testeo**         | Mocks y stubs de clases        | Funciones más fáciles de testear |
+| **Memoria**        | Instancias de objetos          | Funciones y closures             |
 
 ### ✅ Ventajas del Enfoque Funcional
 
@@ -325,6 +330,7 @@ npx ts-node index.ts
 ```
 
 **Salida esperada:**
+
 ```
 Warrior attacks with a sword!
 Mage casts a fireball!
@@ -333,6 +339,7 @@ Warrior says: For honor!
 Mage says: Knowledge is power!
 Healer says: Healing is my duty!
 ```
+
 ---
 
 # Strategy (POO)
@@ -348,6 +355,7 @@ El patrón Strategy permite definir una familia de algoritmos, encapsular cada u
 **Ejemplo real:**
 
 `02-strategy/POO/strategy.ts`
+
 ```typescript
 export interface Strategy {
   attack(): void;
@@ -355,6 +363,7 @@ export interface Strategy {
 ```
 
 `02-strategy/POO/strategies/SwordStrategy.ts`
+
 ```typescript
 import { Strategy } from "../strategy";
 
@@ -368,6 +377,7 @@ export default SwordStrategy;
 ```
 
 `02-strategy/POO/strategies/SpellStrategy.ts`
+
 ```typescript
 import { Strategy } from "../strategy";
 
@@ -381,6 +391,7 @@ export default SpellStrategy;
 ```
 
 `02-strategy/POO/context.ts`
+
 ```typescript
 import { Strategy } from "./strategy";
 
@@ -402,6 +413,7 @@ export default CharacterAttack;
 ```
 
 `02-strategy/POO/index.ts`
+
 ```typescript
 import CharacterAttack from "../POO/context";
 import SwordStrategy from "../POO/strategies/SwordStrategy";
@@ -415,6 +427,7 @@ characterAttack.attack();
 ```
 
 **Salida esperada:**
+
 ```
 This is a sword attack
 This is a spell attack
@@ -435,11 +448,13 @@ Implementación funcional del patrón Strategy usando funciones en vez de clases
 **Ejemplo real:**
 
 `02-strategy/functional/strategy.ts`
+
 ```typescript
 export type Strategy = () => void;
 ```
 
 `02-strategy/functional/strategies.ts`
+
 ```typescript
 export function swordStrategy() {
   return "This is a sword attack";
@@ -455,6 +470,7 @@ export function spellStrategy() {
 ```
 
 `02-strategy/functional/context.ts`
+
 ```typescript
 import { Strategy } from "./strategy";
 
@@ -464,6 +480,7 @@ export function characterAttack(strategy: Strategy) {
 ```
 
 `02-strategy/functional/index.ts`
+
 ```typescript
 import { characterAttack } from "./context";
 import { swordStrategy, spellStrategy } from "./strategies";
@@ -473,6 +490,7 @@ characterAttack(spellStrategy);
 ```
 
 **Salida esperada:**
+
 ```
 This is a sword attack
 This is a spell attack
@@ -593,6 +611,7 @@ dragon.notify("The dragon is attacking!");
 ```
 
 **Salida esperada:**
+
 ```
 Dragon: Notifying observers about event: The dragon has appeared!
 Mage: Received event - The dragon has appeared!. Preparing spells!
@@ -724,6 +743,7 @@ dragon.notify("The dragon is attacking!");
 ```
 
 **Salida esperada:**
+
 ```
 Mage: Received event - The dragon has appeared!. Preparing spells!
 Warrior: Received event - The dragon has appeared!. Ready for battle!
@@ -751,3 +771,165 @@ Priest: Received event - The dragon is attacking!. Healing allies!
 cd 03-observer/functional
 npx ts-node index.ts
 ```
+
+---
+
+# Adapter (POO)
+
+El patrón **Adapter** permite que dos interfaces incompatibles colaboren, actuando como un traductor entre ellas. Es útil cuando quieres reutilizar código existente que no encaja con la interfaz que espera tu sistema.
+
+### 🎯 Propósito
+
+Adaptar la interfaz de una clase existente (`Creature`) para que pueda ser utilizada como si implementara otra interfaz (`Character`).
+
+### 🤔 Problema que Resuelve
+
+Supón que tienes una clase `Dragon` que implementa la interfaz `Creature`, pero tu sistema espera objetos que implementen la interfaz `Character`. El Adapter permite envolver el `Dragon` y usarlo como si fuera un `Character`, sin modificar la clase original.
+
+### 🏗️ Estructura
+
+```
+Character (interface)
+├── attack(): void
+├── takeDamage(amount: number): void
+└── showStatus(): number
+
+Creature (interface)
+├── strike(): void
+├── receiveDamage(amount: number): void
+└── getState(): number
+
+CreatureAdapter (implements Character)
+└── creature: Creature
+    ├── attack() → strike()
+    ├── takeDamage() → receiveDamage()
+    └── showStatus() → getState()
+```
+
+### 💡 Implementación
+
+#### 1. Interfaces
+
+```typescript
+// interfaces/Character.ts
+export interface Character {
+  attack: () => void;
+  takeDamage: (amount: number) => void;
+  showStatus: () => number;
+}
+
+// interfaces/Creature.ts
+export interface Creature {
+  strike: () => void;
+  receiveDamage: (amount: number) => void;
+  getState(): number;
+}
+```
+
+#### 2. Clase a adaptar
+
+```typescript
+// creatures/Dragon.ts
+import { Creature } from "../interfaces/Creature";
+
+export class Dragon implements Creature {
+  private health = 1000;
+  strike() {
+    console.log(`The dragon exales a fire breath!`);
+  }
+
+  receiveDamage(damage: number) {
+    console.log(`The dragon received ${damage} points of damage`);
+    this.health -= damage;
+  }
+
+  getState() {
+    console.log(`Dragon HP: ${this.health}`);
+    return this.health;
+  }
+}
+```
+
+#### 3. Adapter
+
+```typescript
+// adapters/creature.adapter.ts
+import type { Character } from "../interfaces/Character";
+import type { Creature } from "../interfaces/Creature";
+
+export class CreatureAdapter implements Character {
+  constructor(private creature: Creature) {}
+
+  attack() {
+    this.creature.strike();
+  }
+
+  takeDamage(amount: number) {
+    return this.creature.receiveDamage(amount);
+  }
+
+  showStatus() {
+    return this.creature.getState();
+  }
+}
+```
+
+#### 4. Cliente usando el Adapter
+
+```typescript
+// index.ts
+import { Mage } from "./characters/Mage";
+import { Dragon } from "./creatures/Dragon";
+import { CreatureAdapter } from "./adapters/creature.adapter";
+import { Character } from "./interfaces/Character";
+
+const mage = new Mage();
+const dragon = new Dragon();
+const adapteeDragon = new CreatureAdapter(dragon);
+
+function activateCharacter(character: Character) {
+  character.attack();
+  character.takeDamage(15);
+  character.showStatus();
+}
+
+activateCharacter(adapteeDragon);
+activateCharacter(mage);
+```
+
+### 🚀 Uso del Patrón
+
+```bash
+cd 04-adapter/POO
+npx ts-node index.ts
+```
+
+**Salida esperada:**
+
+```
+The dragon exales a fire breath!
+The dragon received 15 points of damage
+Dragon HP: 985
+The mage throw a fireball!
+The mage has received 15 points of damage!
+Mage HP: 85
+```
+
+### ✅ Ventajas
+
+1. Permite reutilizar código existente sin modificarlo
+2. Desacopla el cliente de la implementación concreta
+3. Facilita la integración de sistemas con interfaces incompatibles
+
+### ❌ Desventajas
+
+1. Puede añadir una capa extra de complejidad
+2. Si hay muchas adaptaciones, puede dificultar el mantenimiento
+
+### 🎯 Cuándo Usar
+
+- Cuando necesitas usar una clase existente pero su interfaz no es compatible
+- Cuando quieres integrar sistemas de terceros sin modificar su código
+- Cuando buscas desacoplar el cliente de la implementación concreta
+
+---
