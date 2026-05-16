@@ -1,5 +1,11 @@
 {
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "packageManager": "pnpm@11.0.0",
   "scripts": {
+    "start": "tsx src/index.ts",
+    "test": "NODE_ENV=test node --test --import tsx \"./**/*.test.ts\"",
     "lint": "yarn eslint . --ext .ts"
   },
   "devDependencies": {
@@ -13,6 +19,7 @@
   },
   "dependencies": {
     "ts-node": "^10.9.2",
+    "tsx": "^4.22.0",
     "typescript": "^5.9.2"
   }
 }

@@ -1,210 +1,209 @@
 # Patrones de Diseño en TypeScript
-
 Este repositorio contiene implementaciones de diferentes patrones de diseño en TypeScript, con ejemplos prácticos y explicaciones detalladas.
 
 ## 📋 Tabla de Contenidos
 
-- [Factory Method (POO)](#factory-method-poo)
-- [Factory Method (Funcional)](#factory-method-funcional)
-- [Strategy (POO)](#strategy-poo)
-- [Strategy (Funcional)](#strategy-funcional)
-- [Observer (POO)](#observer-poo)
-- [Observer (Funcional)](#observer-funcional)
-- [Adapter (POO)](#adapter-poo)
+  - [Factory Method (POO)](#factory-method-poo)
+  - [Factory Method (Funcional)](#factory-method-funcional)
+  - [Strategy (POO)](#strategy-poo)
+  - [Strategy (Funcional)](#strategy-funcional)
+  - [Observer (POO)](#observer-poo)
+  - [Observer (Funcional)](#observer-funcional)
+  - [Adapter (POO)](#adapter-poo)
+  - [Singleton (POO)](#singleton-poo)
+  - [Builder (POO)](#builder-poo)
+  - [Builder (Funcional)](#builder-funcional)
 
 ## Factory Method (POO)
 
 ### 🎯 Propósito
 
-El patrón **Factory Method** es un patrón creacional que proporciona una interfaz para crear objetos en una superclase, pero permite a las subclases alterar el tipo de objetos que se crearán.
+  El patrón **Factory Method** es un patrón creacional que proporciona una interfaz para crear objetos en una superclase, pero permite a las subclases alterar el tipo de objetos que se crearán.
 
 ### 🤔 Problema que Resuelve
 
-Imagina que tienes un juego RPG donde necesitas crear diferentes tipos de personajes (Guerrero, Mago, Pícaro, Sanador). El patrón Factory Method te permite crear diferentes tipos de personajes sin modificar el código existente, delegando la creación específica a las subclases.
+  Imagina que tienes un juego RPG donde necesitas crear diferentes tipos de personajes (Guerrero, Mago, Pícaro, Sanador). El patrón Factory Method te permite crear diferentes tipos de personajes sin modificar el código existente, delegando la creación específica a las subclases.
 
 ### 🏗️ Estructura
 
-```
-Creator (CharacterCreator)
-├── character: Character (protected)
-├── factoryMethod(): Character
-├── attack(): void
-└── greet(): void
+  ```
+  Creator (CharacterCreator)
+  ├── character: Character (protected)
+  ├── factoryMethod(): Character
+  ├── attack(): void
+  └── greet(): void
 
-ConcreteCreator (WarriorCreator, MageCreator, RogueCreator, HealerCreator)
-└── factoryMethod(): ConcreteCharacter
+  ConcreteCreator (WarriorCreator, MageCreator, RogueCreator, HealerCreator)
+  └── factoryMethod(): ConcreteCharacter
 
-Product (Character)
-├── class: string
-├── attack(): void
-└── greet(): void
+  Product (Character)
+  ├── class: string
+  ├── attack(): void
+  └── greet(): void
 
-ConcreteProduct (Warrior, Mage, Rogue, Healer)
-├── class: string
-├── attack(): void
-└── greet(): void
-```
+  ConcreteProduct (Warrior, Mage, Rogue, Healer)
+  ├── class: string
+  ├── attack(): void
+  └── greet(): void
+  ```
 
 ### 💡 Implementación
 
 #### 1. Interfaz del Producto (Character)
 
-```typescript
-export interface Character {
-  class: string;
-  attack: () => void;
-  greet: () => void;
-}
-```
+  ```typescript
+  export interface Character {
+    class: string;
+    attack: () => void;
+    greet: () => void;
+  }
+  ```
 
 #### 2. Clase Creadora Abstracta (CharacterCreator)
 
-```typescript
-import { Character } from "../product/Character";
+  ```typescript
+  import { Character } from "../product/Character";
 
-abstract class CharacterCreator {
-  protected character: Character;
+  abstract class CharacterCreator {
+    protected character: Character;
 
-  constructor() {
-    // 🏭 Crea el personaje al instanciar el creator
-    this.character = this.factoryMethod();
+    constructor() {
+      // 🏭 Crea el personaje al instanciar el creator
+      this.character = this.factoryMethod();
+    }
+
+    // 🏭 Factory Method - delega la creación a las subclases
+    abstract factoryMethod(): Character;
+
+    // ⚔️ Método que usa el personaje creado para atacar
+    attack(): void {
+      this.character.attack();
+    }
+
+    // 👋 Método que usa el personaje creado para saludar
+    greet(): void {
+      this.character.greet();
+    }
   }
-
-  // 🏭 Factory Method - delega la creación a las subclases
-  abstract factoryMethod(): Character;
-
-  // ⚔️ Método que usa el personaje creado para atacar
-  attack(): void {
-    this.character.attack();
-  }
-
-  // 👋 Método que usa el personaje creado para saludar
-  greet(): void {
-    this.character.greet();
-  }
-}
-```
+  ```
 
 #### 3. Creadores Concretos
 
-**WarriorCreator:**
+  **WarriorCreator:**
 
-```typescript
-class WarriorCreator extends CharacterCreator {
-  factoryMethod(): Character {
-    return new Warrior();
+  ```typescript
+  class WarriorCreator extends CharacterCreator {
+    factoryMethod(): Character {
+      return new Warrior();
+    }
   }
-}
-```
+  ```
 
-**MageCreator:**
+  **MageCreator:**
 
-```typescript
-class MageCreator extends CharacterCreator {
-  factoryMethod(): Character {
-    return new Mage();
+  ```typescript
+  class MageCreator extends CharacterCreator {
+    factoryMethod(): Character {
+      return new Mage();
+    }
   }
-}
-```
+  ```
 
 #### 4. Productos Concretos
 
-**Warrior:**
+  **Warrior:**
 
-```typescript
-class Warrior implements Character {
-  class = "Warrior";
+  ```typescript
+  class Warrior implements Character {
+    class = "Warrior";
 
-  attack(): void {
-    console.log(`Warrior attacks with a sword!`);
+    attack(): void {
+      console.log(`Warrior attacks with a sword!`);
+    }
+
+    greet(): void {
+      console.log(`Warrior says: For honor!`);
+    }
   }
+  ```
 
-  greet(): void {
-    console.log(`Warrior says: For honor!`);
+  **Mage:**
+
+  ```typescript
+  class Mage implements Character {
+    class = "Mage";
+
+    attack(): void {
+      console.log(`Mage casts a fireball!`);
+    }
+
+    greet(): void {
+      console.log(`Mage says: Knowledge is power!`);
+    }
   }
-}
-```
-
-**Mage:**
-
-```typescript
-class Mage implements Character {
-  class = "Mage";
-
-  attack(): void {
-    console.log(`Mage casts a fireball!`);
-  }
-
-  greet(): void {
-    console.log(`Mage says: Knowledge is power!`);
-  }
-}
-```
+  ```
 
 ### 🚀 Uso del Patrón
 
-```typescript
-function main() {
-  const warrior = new WarriorCreator();
-  const healer = new HealerCreator();
-  const rogue = new RogueCreator();
-  const mage = new MageCreator();
+  ```typescript
+  function main() {
+    const warrior = new WarriorCreator();
+    const healer = new HealerCreator();
+    const rogue = new RogueCreator();
+    const mage = new MageCreator();
 
-  warrior.attack();
-  healer.attack();
-  rogue.attack();
-  mage.attack();
+    warrior.attack();
+    healer.attack();
+    rogue.attack();
+    mage.attack();
 
-  warrior.greet();
-  healer.greet();
-  rogue.greet();
-  mage.greet();
-}
-```
+    warrior.greet();
+    healer.greet();
+    rogue.greet();
+    mage.greet();
+  }
+  ```
 
 ### ✅ Ventajas
 
-1. **Principio Abierto/Cerrado**: Puedes agregar nuevos tipos de personajes sin modificar código existente
-2. **Separación de responsabilidades**: La lógica de creación está separada del uso
-3. **Flexibilidad**: Fácil intercambio de personajes
-4. **Mantenibilidad**: Código más organizado y fácil de mantener
+  1. **Principio Abierto/Cerrado**: Puedes agregar nuevos tipos de personajes sin modificar código existente
+  2. **Separación de responsabilidades**: La lógica de creación está separada del uso
+  3. **Flexibilidad**: Fácil intercambio de personajes
+  4. **Mantenibilidad**: Código más organizado y fácil de mantener
 
 ### ❌ Desventajas
 
-1. **Complejidad**: Puede hacer el código más complejo para casos simples
-2. **Jerarquía de clases**: Requiere crear muchas subclases
+  1. **Complejidad**: Puede hacer el código más complejo para casos simples
+  2. **Jerarquía de clases**: Requiere crear muchas subclases
 
 ### 🎯 Cuándo Usar
 
-- Cuando no sabes de antemano los tipos exactos de personajes que necesitarás
-- Cuando quieres proporcionar a los usuarios una forma de extender el sistema de personajes
-- Cuando quieres reutilizar personajes existentes en lugar de reconstruirlos
+  - Cuando no sabes de antemano los tipos exactos de personajes que necesitarás
+  - Cuando quieres proporcionar a los usuarios una forma de extender el sistema de personajes
+  - Cuando quieres reutilizar personajes existentes en lugar de reconstruirlos
 
 ### 🔧 Ejecutar el Ejemplo
 
-```bash
-cd 01-factory-method/POO
-npx ts-node index.ts
-```
+  ```bash
+  cd design-patterns/01-factory-method/POO
+  npx ts-node index.ts
+  ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```
-Warrior attacks with a sword!
-Warrior says: For honor!
-Mage casts a fireball!
-Mage says: Knowledge is power!
-Rogue strikes from the shadows!
-Rogue says: Silence is golden!
-Healer casts a healing spell!
-Healer says: Healing is my duty!
-```
-
+  ```
+  Warrior attacks with a sword!
+  Warrior says: For honor!
+  Mage casts a fireball!
+  Mage says: Knowledge is power!
+  Rogue strikes from the shadows!
+  Rogue says: Silence is golden!
+  Healer casts a healing spell!
+  Healer says: Healing is my duty!
+  ```
 ---
 
 ## Factory Method (Funcional)
-
-### 🎯 Propósito
 
 Implementación funcional del patrón **Factory Method** aplicado a la creación de personajes de juego. Esta versión demuestra cómo implementar el patrón usando funciones puras y composición en lugar de clases e herencia.
 
@@ -325,7 +324,7 @@ function main() {
 ### 🔧 Ejecutar el Ejemplo
 
 ```bash
-cd 01-factory-method/functional
+cd design-patterns/01-factory-method/functional
 npx ts-node index.ts
 ```
 
@@ -342,6 +341,7 @@ Healer says: Healing is my duty!
 
 ---
 
+
 # Strategy (POO)
 
 El patrón Strategy permite definir una familia de algoritmos, encapsular cada uno y hacerlos intercambiables. Permite que el algoritmo varíe independientemente de los clientes que lo utilizan.
@@ -354,7 +354,7 @@ El patrón Strategy permite definir una familia de algoritmos, encapsular cada u
 
 **Ejemplo real:**
 
-`02-strategy/POO/strategy.ts`
+`design-patterns/02-strategy/POO/strategy.ts`
 
 ```typescript
 export interface Strategy {
@@ -362,7 +362,7 @@ export interface Strategy {
 }
 ```
 
-`02-strategy/POO/strategies/SwordStrategy.ts`
+`design-patterns/02-strategy/POO/strategies/SwordStrategy.ts`
 
 ```typescript
 import { Strategy } from "../strategy";
@@ -376,7 +376,7 @@ class SwordStrategy implements Strategy {
 export default SwordStrategy;
 ```
 
-`02-strategy/POO/strategies/SpellStrategy.ts`
+`design-patterns/02-strategy/POO/strategies/SpellStrategy.ts`
 
 ```typescript
 import { Strategy } from "../strategy";
@@ -390,7 +390,7 @@ class SpellStrategy implements Strategy {
 export default SpellStrategy;
 ```
 
-`02-strategy/POO/context.ts`
+`design-patterns/02-strategy/POO/context.ts`
 
 ```typescript
 import { Strategy } from "./strategy";
@@ -412,7 +412,7 @@ class CharacterAttack {
 export default CharacterAttack;
 ```
 
-`02-strategy/POO/index.ts`
+`design-patterns/02-strategy/POO/index.ts`
 
 ```typescript
 import CharacterAttack from "../POO/context";
@@ -447,13 +447,13 @@ Implementación funcional del patrón Strategy usando funciones en vez de clases
 
 **Ejemplo real:**
 
-`02-strategy/functional/strategy.ts`
+`design-patterns/02-strategy/functional/strategy.ts`
 
 ```typescript
 export type Strategy = () => void;
 ```
 
-`02-strategy/functional/strategies.ts`
+`design-patterns/02-strategy/functional/strategies.ts`
 
 ```typescript
 export function swordStrategy() {
@@ -469,7 +469,7 @@ export function spellStrategy() {
 }
 ```
 
-`02-strategy/functional/context.ts`
+`design-patterns/02-strategy/functional/context.ts`
 
 ```typescript
 import { Strategy } from "./strategy";
@@ -479,7 +479,7 @@ export function characterAttack(strategy: Strategy) {
 }
 ```
 
-`02-strategy/functional/index.ts`
+`design-patterns/02-strategy/functional/index.ts`
 
 ```typescript
 import { characterAttack } from "./context";
@@ -638,7 +638,7 @@ Priest: Received event - The dragon is attacking!. Ready to heal!
 ### 🔧 Ejecutar el Ejemplo
 
 ```bash
-cd 03-observer/POO
+cd design-patterns/03-observer/POO
 npx ts-node index.ts
 ```
 
@@ -768,7 +768,7 @@ Priest: Received event - The dragon is attacking!. Healing allies!
 ### 🔧 Ejecutar el Ejemplo
 
 ```bash
-cd 03-observer/functional
+cd design-patterns/03-observer/functional
 npx ts-node index.ts
 ```
 
@@ -900,7 +900,7 @@ activateCharacter(mage);
 ### 🚀 Uso del Patrón
 
 ```bash
-cd 04-adapter/POO
+cd design-patterns/04-adapter/POO
 npx ts-node index.ts
 ```
 
@@ -930,6 +930,337 @@ Mage HP: 85
 
 - Cuando necesitas usar una clase existente pero su interfaz no es compatible
 - Cuando quieres integrar sistemas de terceros sin modificar su código
-- Cuando buscas desacoplar el cliente de la implementación concreta
+  - Cuando buscas desacoplar el cliente de la implementación concreta
+
+---
+
+# Singleton (POO)
+
+El patrón **Singleton** asegura que una clase tenga una única instancia y proporciona un punto de acceso global a ella.
+
+### 🎯 Propósito
+
+Garantizar una sola instancia de una clase (por ejemplo, un único Rey o un único Boss Dragon) y controlar el acceso a ella.
+
+### 🤔 Problema que Resuelve
+
+En un juego RPG, solo debería existir un Rey en el reino o un único Boss Dragon. El patrón Singleton evita crear múltiples instancias y centraliza el estado global.
+
+### 🏗️ Estructura
+
+```
+Singleton
+├── instance: Singleton (static, private)
+├── constructor: private
+└── getInstance(): Singleton (static)
+```
+
+### 💡 Implementación
+
+`design-patterns/05-singleton/POO/singleton.ts`
+
+```typescript
+export class Singleton {
+  static instance: Singleton;
+
+  private constructor() {}
+
+  static getInstance(): Singleton {
+    if (!this.instance) {
+      this.instance = new Singleton();
+    }
+
+    return this.instance;
+  }
+}
+```
+
+### 🚀 Uso del Patrón
+
+```typescript
+const s1 = Singleton.getInstance();
+const s2 = Singleton.getInstance();
+
+console.log(s1 === s2); // true
+```
+
+### ✅ Ventajas
+
+1. **Control de instancia única**: Garantiza que solo exista una instancia
+2. **Lazy initialization**: La instancia se crea solo cuando se necesita
+3. **Punto de acceso global**: Fácil acceso desde cualquier parte
+
+### ❌ Desventajas
+
+1. **Acoplamiento**: Introduce estado global difícil de mantener
+2. **Testabilidad**: Dificulta las pruebas unitarias al no poder aislar la instancia
+3. **Concurrencia**: Puede dar problemas en entornos multi-thread
+
+### 🎯 Cuándo Usar
+
+- Cuando necesitas exactamente una instancia de una clase
+- Cuando el control de acceso a un recurso compartido debe ser centralizado
+- Para objetos que deben ser únicos en el sistema (configuración, logging, etc.)
+
+### 🧠 Nota: ¿Por qué no hay versión Funcional?
+
+Singleton resuelve un problema propio de POO: controlar que una clase solo tenga una instancia. En programación funcional no hay clases, instancias ni constructores privados. Los módulos ES ya son singletons por naturaleza (Node cachea el módulo tras la primera importación), por lo que una constante exportada es suficiente:
+
+```typescript
+// Esto ya es "singleton" sin ningún patrón
+export const king = { name: "Arthur", hp: 100 };
+```
+
+Un equivalente con lazy initialization sería un closure:
+
+```typescript
+const createSingleton = <T>(factory: () => T) => {
+  let instance: T | null = null;
+  return (): T => {
+    if (!instance) instance = factory();
+    return instance;
+  };
+};
+
+export const getKing = createSingleton(() => ({ name: "Arthur", hp: 100 }));
+```
+
+Pero esto es simplemente usar mecanismos base del lenguaje (closures, módulos) — no constituye un patrón de diseño digno de documentación aparte. Por eso este patrón solo tiene implementación POO.
+
+---
+
+# Builder (POO)
+
+El patrón **Builder** permite construir objetos complejos paso a paso, separando el proceso de construcción de la representación final.
+
+### 🎯 Propósito
+
+Construir un objeto complejo (por ejemplo, un personaje con atributos configurables) mediante una interfaz fluida que permite personalizar cada paso de la construcción.
+
+### 🤔 Problema que Resuelve
+
+Crear un personaje con múltiples atributos opcionales (armadura, arma, etc.) usando un constructor con muchos parámetros es confuso y propenso a errores. Builder permite una construcción clara y escalonada.
+
+### 🏗️ Estructura
+
+```
+Builder<T> (interface)
+└── build(): T
+
+ConcreteBuilder (MageBuilder implements Builder<Mage>)
+├── mage: Mage (private)
+├── withArmor(armor: string): MageBuilder
+├── withWeapon(weapon: string): MageBuilder
+└── build(): Mage
+
+Product (Mage)
+├── name: string
+├── armor: string | null
+├── weapon: string | null
+├── attack(): void
+└── defend(): void
+```
+
+### 💡 Implementación
+
+#### 1. Interfaz Builder
+
+`design-patterns/06-builder/POO/builder/builder.ts`
+
+```typescript
+export interface Builder<T> {
+  build(): T;
+}
+```
+
+#### 2. Producto
+
+`design-patterns/06-builder/POO/characters/Mage.ts`
+
+```typescript
+export class Mage {
+  name: string;
+  armor: string | null = null;
+  weapon: string | null = null;
+
+  constructor(name: string) {
+    this.name = name;
+  }
+
+  attack(): void {
+    console.log(`Mage casts a fireball!`);
+  }
+
+  defend(): void {
+    console.log(`Mage conjures a magical shield!`);
+  }
+}
+```
+
+#### 3. Builder Concreto
+
+`design-patterns/06-builder/POO/concreteBuilders/mageBuilder.ts`
+
+```typescript
+export class MageBuilder implements Builder<Mage> {
+  private readonly mage: Mage;
+
+  constructor() {
+    this.mage = new Mage("Gandalf");
+  }
+
+  withArmor(armor: string): MageBuilder {
+    this.mage.armor = armor;
+    return this;
+  }
+
+  withWeapon(weapon: string): MageBuilder {
+    this.mage.weapon = weapon;
+    return this;
+  }
+
+  build(): Mage {
+    return this.mage;
+  }
+}
+```
+
+### 🚀 Uso del Patrón
+
+```typescript
+const mageBuilder = new MageBuilder();
+const mage = mageBuilder
+  .withArmor("Robe of the Archmage")
+  .withWeapon("Staff of Power")
+  .build();
+```
+
+### ✅ Ventajas
+
+1. **Construcción paso a paso**: Permite personalizar objetos complejos de forma clara
+2. **API fluida**: Encadenamiento de métodos legible y expresivo
+3. **Separación de responsabilidades**: El código de construcción está aislado del producto final
+4. **Reutilización**: El mismo builder puede producir diferentes variaciones del producto
+
+### ❌ Desventajas
+
+1. **Boilerplate**: Requiere crear interfaces y clases adicionales
+2. **Mutabilidad**: El builder mantiene estado interno durante la construcción
+3. **Acoplamiento**: El builder conoce los detalles internos del producto
+
+### 🎯 Cuándo Usar
+
+- Cuando un producto requiere muchos parámetros opcionales
+- Cuando quieres separar la lógica de construcción del producto final
+- Para evitar constructores con largas listas de parámetros ("telescoping constructors")
+
+---
+
+# Builder (Funcional)
+
+Implementación funcional del patrón **Builder** usando composición de funciones y objetos inmutables.
+
+### 🎯 Propósito
+
+Construir objetos complejos mediante composición de funciones puras, sin efectos secundarios ni estado mutable.
+
+### 🏗️ Estructura Funcional
+
+```
+Mage (type)
+├── name: string
+├── armor: string | null
+└── weapon: string | null
+
+Factory Function
+└── createMage(name: string): Mage
+
+Builder Functions
+├── withArmor(armor: string): (mage: Mage) => Mage
+└── withWeapon(weapon: string): (mage: Mage) => Mage
+
+Composition
+└── pipe(...fns): (value: T) => T
+```
+
+### 💡 Implementación
+
+#### 1. Tipo del Producto
+
+`design-patterns/06-builder/functional/mageBuilder.ts`
+
+```typescript
+export interface Mage {
+  name: string;
+  armor: string | null;
+  weapon: string | null;
+}
+
+export const createMage = (name: string): Mage => ({
+  name,
+  armor: null,
+  weapon: null,
+});
+```
+
+#### 2. Funciones Builder (puras e inmutables)
+
+```typescript
+export const withArmor = (armor: string) => (mage: Mage): Mage => ({
+  ...mage,
+  armor,
+});
+
+export const withWeapon = (weapon: string) => (mage: Mage): Mage => ({
+  ...mage,
+  weapon,
+});
+```
+
+#### 3. Composición con pipe
+
+`design-patterns/06-builder/functional/builder.ts`
+
+```typescript
+export const pipe = <T>(...fns: Array<(value: T) => T>) => (value: T): T =>
+  fns.reduce((acc, fn) => fn(acc), value);
+```
+
+### 🚀 Uso del Patrón
+
+```typescript
+const mage = pipe(
+  withArmor("Robe of the Archmage"),
+  withWeapon("Staff of Power"),
+)(createMage("Gandalf"));
+```
+
+### 🔄 Comparación: POO vs Funcional
+
+| Aspecto | POO | Funcional |
+|---------|-----|-----------|
+| **Abstracción** | Interfaz `Builder<T>` | Tipo `Mage` + funciones |
+| **Construcción** | Métodos que mutan estado interno | Funciones que retornan nuevos objetos |
+| **Estado** | Mutable dentro del builder | Inmutable (spread operator) |
+| **API** | Fluent API con `return this` | Composición con `pipe` |
+| **Testabilidad** | Requiere instanciar builder | Funciones puras sin setup |
+
+### ✅ Ventajas del Enfoque Funcional
+
+1. **Inmutabilidad**: Cada paso crea un nuevo objeto, sin efectos secundarios
+2. **Composición**: Las funciones builder se combinan fácilmente con `pipe`
+3. **Simplicidad**: Sin clases ni interfaces adicionales
+4. **Testeo**: Funciones puras sin setup complejo
+
+### ❌ Desventajas del Enfoque Funcional
+
+1. **Creación de objetos**: Cada paso crea un nuevo objeto (mayor presión en GC)
+2. **Sin validación diferida**: No se puede validar el estado intermedio fácilmente
+
+### 🎯 Cuándo Usar
+
+- Cuando priorizas inmutabilidad y funciones puras
+- Cuando el producto es simple y no requiere validaciones complejas
+- Para composición declarativa y pipelines de transformación de datos
 
 ---

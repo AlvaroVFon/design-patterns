@@ -1,20 +1,20 @@
 import { Character } from "../product/Character";
 
 abstract class CharacterCreator {
-  protected character: Character
+  protected character: Character;
 
   constructor() {
-    this.character = this.factoryMethod()
+    this.character = this.factoryMethod();
   }
 
-  abstract factoryMethod(): Character
+  abstract factoryMethod(): Character;
 
   attack(): void {
-    this.character.attack()
+    this.character.attack();
   }
 
   greet() {
-    this.character.greet()
+    this.character.greet();
   }
 }
 
